@@ -14,6 +14,8 @@ FROM Build AS Package
 	WORKDIR /Odin
 	RUN mkdir -p ./Odin
 	RUN mv odin LICENSE base core vendor Odin
+	COPY assets/remove_dlls.sh remove_dlls.sh
+	RUN sh remove_dlls.sh Odin
 	RUN zip -r Odin.zip Odin
 
 	WORKDIR /
