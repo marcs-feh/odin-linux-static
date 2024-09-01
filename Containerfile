@@ -1,12 +1,15 @@
 FROM alpine:3.20 AS Base
 	RUN apk add --no-cache \
-		musl-dev llvm18-dev clang18 git mold zip \
+		musl-dev llvm18-dev clang18 git mold zip lz4 \
 		libxml2-static llvm18-static zlib-static zstd-static
 
 FROM Base AS Build
+ARG ODIN_ARCHIVE
 	WORKDIR /
-	RUN git clone 'https://github.com/odin-lang/Odin' Odin
 	WORKDIR /Odin
+	COPY ${ODIN_ARCHIVE} odin-source.tar.zst
+	RUN zstd -d odin-source.tar.zst -c | tar xf -
+
 	COPY assets/build_static.sh build_static.sh
 	RUN sh build_static.sh
 
