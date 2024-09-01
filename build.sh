@@ -28,5 +28,6 @@ podman rm --force OdinBuild
 rm -f "$ODIN_ARCHIVE"
 
 if [ ! -z $includeSources ]; then
+	echo "Adding source to archive"
 	zip -r Odin.zip Odin/src
 fi
