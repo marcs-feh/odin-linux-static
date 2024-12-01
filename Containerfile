@@ -3,32 +3,14 @@ FROM alpine:3.20 AS Base
 		musl-dev llvm18-dev clang18 git mold zip lz4 \
 		libxml2-static llvm18-static zlib-static zstd-static
 
-FROM Base AS Build
-ARG ODIN_ARCHIVE
-	WORKDIR /
+FROM Base AS SetupScripts
 	WORKDIR /Odin
-	COPY ${ODIN_ARCHIVE} odin-source.tar.zst
-	RUN zstd -d odin-source.tar.zst -c | tar xf -
+	COPY assets/build_static.sh /
+	COPY assets/package_odin.sh /
+	COPY assets/remove_dlls.sh /
 
-	COPY assets/build_static.sh build_static.sh
-	RUN sh build_static.sh
-
-FROM Build AS Package
-	WORKDIR /Odin
-	RUN mkdir -p ./Odin
-	RUN mv odin LICENSE base core vendor Odin
-	COPY assets/remove_dlls.sh remove_dlls.sh
-	RUN sh remove_dlls.sh Odin
-	RUN zip -9 -r Odin.zip Odin
-
+FROM SetupScripts AS Build
 	WORKDIR /
-	COPY assets/entrypoint.c /entrypoint.c
-	RUN clang-18 -std=c89 entrypoint.c -static -fPIC -o entrypoint
+	ENTRYPOINT ["sh", "/package_odin.sh"]
 
-FROM Base AS Output
-	WORKDIR /
-	COPY --from=Package /Odin/Odin.zip /Odin.zip
-	COPY --from=Package /entrypoint /entrypoint
-
-ENTRYPOINT '/entrypoint'
 
