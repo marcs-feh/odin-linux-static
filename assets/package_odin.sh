@@ -6,6 +6,10 @@ cd /
 sh build_static.sh
 sh remove_dlls.sh Odin
 strip Odin/odin
-tar xJvf Odin.txz Odin
-mv Odin.txz Odin
+zip -r -9 Odin.zip \
+	Odin/base Odin/core Odin/vendor \
+	Odin/src Odin/.gitignore \
+	Odin/LICENSE Odin/README.md
+
+mv Odin.zip Odin
 

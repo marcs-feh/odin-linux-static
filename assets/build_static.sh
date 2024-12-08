@@ -13,7 +13,7 @@ CXXFLAGS="$CXXFLAGS -std=c++14 $(llvm-config-18 --cflags)"
 DISABLED_WARNINGS="-Wno-switch -Wno-macro-redefined -Wno-unused-value"
 LLVM_CONFIG='llvm-config-18'
 
-LDFLAGS="-static -lzstd -lz -lffi -pthread  -fuse-ld=mold"
+LDFLAGS="-fuse-ld=mold -static -lzstd -lz -lffi -pthread"
 LDFLAGS="$LDFLAGS $($LLVM_CONFIG --link-static --ldflags --libs --system-libs)"
 EXTRAFLAGS="-O2 -fPIE"
 
